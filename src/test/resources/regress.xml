@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Suite1" verbose="1">
+    <test name="Regression">
+        <packages>
+            <package name="org.testTask.actionTests"/>
+            <package name="org.testTask.endToEndTests"/>
+            <package name="org.testTask.loginTests"/>
+            <package name="org.testTask.logoutTests"/>
+        </packages>
+    </test>
+</suite>
