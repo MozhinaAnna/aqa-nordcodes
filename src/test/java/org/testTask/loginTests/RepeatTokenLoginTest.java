@@ -22,8 +22,8 @@ public class RepeatTokenLoginTest extends BaseApi {
 
         Response loginResponse1 = apiClient.callEndPoint(userToken, Action.LOGIN);
 
-        Assertions.assertThat(loginResponse1.statusCode())
-                .isEqualTo(200);
+        Assertions.assertThat(loginResponse1
+                        .statusCode()).isEqualTo(200);
         Assertions.assertThat(loginResponse1.jsonPath().getString("result"))
                 .isEqualTo("OK");
 

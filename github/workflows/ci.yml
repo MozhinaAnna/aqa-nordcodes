@@ -1,0 +1,44 @@
+name: API Tests CI
+
+# Триггеры для запуска: push в ветку main или создание Pull Request
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-api-tests:
+    runs-on: ubuntu-latest # Запускаем на виртуальной машине с Ubuntu
+
+    steps:
+      # 1. Скачиваем код из репозитория
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Запускаем всю нашу связку через docker-compose
+      - name: Run tests with Docker Compose
+        # Эта команда соберет образы и запустит контейнеры.
+        # --exit-code-from tests - ключевой флаг! Он заставит CI-шаг упасть, если тесты упадут.
+        run: docker-compose up --build --exit-code-from tests
+
+      # 3. Публикуем Allure отчет (опционально, но очень круто)
+      - name: Store Allure results
+        if: always() # Выполняем этот шаг всегда, даже если тесты упали
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: target/allure-results
+          retention-days: 1
+          
+      # Шаг для генерации и деплоя отчета на GitHub Pages
+      - name: Generate and Deploy Allure Report
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
+          # Генерируем отчет из артефактов
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          # Перед этим шагом нужно сгенерировать сам отчет. Можно добавить 'allure-commandline' экшен

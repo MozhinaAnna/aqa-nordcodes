@@ -1,0 +1,47 @@
+services:
+  # 1. Сервис, который мы тестируем (AUT)
+  my-app:
+    build:
+      context: ./aqa # Путь к Dockerfile нашего сервиса
+    container_name: my-app
+    ports:
+      - "8080:8080" # Пробрасываем порт для возможной отладки с хоста
+      # healthcheck: убираем, потому что приложение возвращает 500 без поднятого мока
+      # test: ["CMD", "curl", "-f", "-H", "X-API-Key: qazWSXedc", "http://localhost:8080/actuator/health"]
+      # interval: 10s
+      # timeout: 5s
+      # retries: 5
+    depends_on:
+      - wiremock
+    environment:
+      MOCK: http://wiremock:8080
+
+  # 2. WireMock для мокирования зависимостей
+  wiremock:
+    image: wiremock/wiremock:latest
+    container_name: wiremock
+    ports:
+      - "8081:8080"
+    volumes:
+      # Пробрасываем твои маппинги (моки) внутрь контейнера
+      - ./src/test/resources/wiremock:/home/wiremock/mappings
+
+  # 3. Наш тестовый фреймворк
+  tests:
+    build:
+      context: . # Используем Dockerfile из корня проекта
+    container_name: tests
+    # Важно! Контейнер с тестами зависит от готовности сервиса и моков
+    depends_on:
+      my-app:
+        condition: service_started
+        # condition: service_healthy # Запустится только после успешного healthcheck'а my-app
+      wiremock:
+        condition: service_started
+    volumes:
+      # Пробрасываем директорию с результатами Allure на хост-машину, чтобы не потерять отчет
+      - ./target/allure-results:/app/target/allure-results
+    environment:
+      # Передаем URL'ы сервисов через переменные окружения. Это best practice.
+      APP_BASE_URL: http://my-app:8080
+      WIREMOCK_URL: http://wiremock:8080

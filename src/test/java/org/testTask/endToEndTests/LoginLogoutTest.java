@@ -21,14 +21,26 @@ public class LoginLogoutTest extends BaseApi {
 
         Stubs.create200AuthStub(wireMockServer, userToken);
 
-        Response loginResponse = apiClient.callEndPoint(userToken, Action.LOGIN);
-        loginResponse.then()
+        Response loginResponse1 = apiClient.callEndPoint(userToken, Action.LOGIN);
+        loginResponse1.then()
                 .log().ifError()
                 .statusCode(200)
                 .body("result", equalTo("OK"));
 
-        Response logoutResponse = apiClient.callEndPoint(userToken, Action.LOGOUT);
-        logoutResponse.then()
+        Response logoutResponse1 = apiClient.callEndPoint(userToken, Action.LOGOUT);
+        logoutResponse1.then()
+                .log().ifError()
+                .statusCode(200)
+                .body("result", equalTo("OK"));
+
+        Response loginResponse2 = apiClient.callEndPoint(userToken, Action.LOGIN);
+        loginResponse2.then()
+                .log().ifError()
+                .statusCode(200)
+                .body("result", equalTo("OK"));
+
+        Response logoutResponse2 = apiClient.callEndPoint(userToken, Action.LOGOUT);
+        logoutResponse2.then()
                 .log().ifError()
                 .statusCode(200)
                 .body("result", equalTo("OK"));

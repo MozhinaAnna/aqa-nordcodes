@@ -24,7 +24,7 @@ public class Stubs {
         );
     }
 
-    @Step("Создание заглушки 200 /auth для токена '{token}'")
+    @Step("Создание заглушки 401 /auth для токена '{token}'")
     public static void create401AuthStub(WireMockServer server, String token) {
 
         server.stubFor(
@@ -59,7 +59,7 @@ public class Stubs {
         );
     }
 
-    @Step("Создание заглушки /doAction для токена '{token}'")
+    @Step("Создание заглушки 400 /doAction для токена '{token}'")
     public static void create400ActionStub(WireMockServer server, String token) {
         server.stubFor(
                 WireMock.post(WireMock.urlEqualTo("/doAction"))
