@@ -20,6 +20,7 @@ services:
   wiremock:
     image: wiremock/wiremock:latest
     container_name: wiremock
+    command: --verbose # писать в лог каждый входящий запрос
     ports:
       - "8081:8080"
     volumes:
