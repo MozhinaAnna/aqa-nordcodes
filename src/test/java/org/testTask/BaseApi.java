@@ -36,7 +36,7 @@ public class BaseApi {
 
         String mockAuthUrl = wireMockServer.baseUrl();
 
-        int appPort; //выделение динамических портов делает возможным параллельный запуск нескольких тестовых сьютов
+        int appPort; //выделение динамических портов делает возможным параллельный запуск нескольких сьютов
         try (ServerSocket socket = new ServerSocket(0)) {
             appPort = socket.getLocalPort();
         }
